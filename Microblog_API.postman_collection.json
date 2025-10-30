@@ -1,0 +1,59 @@
+{
+"info": {
+"name": "Microblog API",
+"_postman_id": "microblog-collection",
+"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+},
+"item": [
+{
+"name": "Ping",
+"request": {
+"method": "GET",
+"header": [],
+"url": {"raw": "http://localhost:8000/ping", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["ping"]}
+}
+},
+{
+"name": "Me",
+"request": {
+"method": "GET",
+"header": [{"key": "api-key", "value": "alice-key"}],
+"url": {"raw": "http://localhost:8000/api/users/me", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["api","users","me"]}
+}
+},
+{
+"name": "Feed",
+"request": {
+"method": "GET",
+"header": [{"key": "api-key", "value": "alice-key"}],
+"url": {"raw": "http://localhost:8000/api/tweets", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["api","tweets"]}
+}
+},
+{
+"name": "Create Tweet",
+"request": {
+"method": "POST",
+"header": [{"key": "api-key", "value": "alice-key"}, {"key": "Content-Type", "value": "application/json"}],
+"body": {"mode": "raw", "raw": "{\"tweet_data\": \"Hello from Postman!\", \"tweet_media_ids\": []}"},
+"url": {"raw": "http://localhost:8000/api/tweets", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["api","tweets"]}
+}
+},
+{
+"name": "Like Tweet",
+"request": {
+"method": "POST",
+"header": [{"key": "api-key", "value": "alice-key"}],
+"url": {"raw": "http://localhost:8000/api/tweets/1/likes", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["api","tweets","1","likes"]}
+}
+},
+{
+"name": "Upload Media (form-data)",
+"request": {
+"method": "POST",
+"header": [{"key": "api-key", "value": "alice-key"}],
+"body": {"mode": "formdata", "formdata": [{"key": "file", "type": "file", "src": ""}]},
+"url": {"raw": "http://localhost:8000/api/medias", "protocol": "http", "host": ["localhost"], "port": "8000", "path": ["api","medias"]}
+}
+}
+]
+}

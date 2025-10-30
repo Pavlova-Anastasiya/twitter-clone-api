@@ -1,0 +1,45 @@
+python-advanced-diplom-starter/
+├── .env.example
+├── .flake8
+├── .gitignore
+├── .gitlab-ci.yml
+├── .pre-commit-config.yaml
+├── Dockerfile
+├── Microblog_API.postman_collection.json
+├── README.md
+├── docker-compose.yml
+├── pyproject.toml
+├── requirements-dev.txt
+├── requirements.txt
+├── app/
+│   ├── __init__.py
+│   ├── wsgi.py
+│   ├── config.py
+│   ├── __init__media_static_patch.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── utils.py
+│   │   ├── medias.py
+│   │   ├── tweets.py
+│   │   └── users.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── follow.py
+│   │   ├── like.py
+│   │   ├── media.py
+│   │   ├── tweet.py
+│   │   └── user.py
+│   └── schemas/
+│       ├── common.py
+│       ├── medias.py
+│       ├── tweets.py
+│       └── users.py
+├── scripts/
+│   └── seed.py
+└── tests/
+    └── test_ping.py
+
+
+Примечания:
+       Папка migrations/ появится после команд Alembic (flask --app app.wsgi db init, migrate, upgrade).
+       Каталог для медиа в рантайме — том media_data в Docker (/data/uploads), в репозиторий не кладём.
