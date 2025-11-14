@@ -32,7 +32,7 @@ export-env {
       }
     }
 
-    let virtual_env = r#'/home/anastasiya/PycharmProjects/Python-advanced-diplom/.venv'#
+    let virtual_env = r#'/home/anastasiya/PycharmProjects/Python_advanced_diplom/.venv'#
     let bin = r#'bin'#
 
     let is_windows = ($nu.os-info.family) == 'windows'

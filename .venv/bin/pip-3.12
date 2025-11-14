@@ -1,4 +1,4 @@
-#!/home/anastasiya/PycharmProjects/Python-advanced-diplom/.venv/bin/python
+#!/home/anastasiya/PycharmProjects/Python_advanced_diplom/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
