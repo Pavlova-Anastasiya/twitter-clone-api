@@ -1,7 +1,7 @@
-'''
+"""
 ORM-модель пользователя.
 Содержит имя и уникальный api_key для заголовка `api-key`.
-'''
+"""
 from __future__ import annotations
 
 from sqlalchemy import String
@@ -11,14 +11,14 @@ from app.models.base import Base
 
 
 class User(Base):
-    '''
+    """
     Модель пользователя.
 
     Поля:
         id: PK.
         name: отображаемое имя.
         api_key: уникальный ключ для заголовка авторизации (api-key).
-    '''
+    """
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)

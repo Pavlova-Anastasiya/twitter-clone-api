@@ -1,6 +1,6 @@
-'''
+"""
 ORM-модель твита и связей: медиа, лайки.
-'''
+"""
 from __future__ import annotations
 
 from datetime import datetime
@@ -12,7 +12,7 @@ from app.models.base import Base
 
 
 class Tweet(Base):
-    '''
+    """
     Твит (сообщение).
 
     Поля:
@@ -25,7 +25,7 @@ class Tweet(Base):
         author: User.
         medias: список Media через таблицу tweet_medias.
         likes: список Like.
-    '''
+    """
     __tablename__ = "tweets"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -39,14 +39,14 @@ class Tweet(Base):
 
 
 class Media(Base):
-    '''
+    """
     Медиа-файл, загруженный пользователем.
 
     Поля:
         id: PK.
         path: относительный путь к файлу.
         created_at: дата загрузки.
-    '''
+    """
     __tablename__ = "medias"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -57,9 +57,9 @@ class Media(Base):
 
 
 class TweetMedia(Base):
-    '''
+    """
     Связующая таблица "многие-ко-многим" между твитами и медиа-файлами.
-    '''
+    """
     __tablename__ = "tweet_medias"
 
     tweet_id: Mapped[int] = mapped_column(ForeignKey("tweets.id", ondelete="CASCADE"), primary_key=True)
@@ -67,9 +67,9 @@ class TweetMedia(Base):
 
 
 class Like(Base):
-    '''
+    """
     Лайк твита пользователем (составной PK).
-    '''
+    """
     __tablename__ = "likes"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)

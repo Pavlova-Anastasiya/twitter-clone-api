@@ -1,4 +1,4 @@
-'''
+"""
 Модуль Alembic env.
 Настраивает контекст миграций, подхватывает DATABASE_URL из переменных окружения,
 подключает метаданные моделей для автогенерации (autogenerate).
@@ -6,7 +6,7 @@
 Ключевые моменты:
 - offline/online режимы миграций;
 - интеграция с моделями (app.models.base.Base.metadata).
-'''
+"""
 from __future__ import annotations
 
 import os
@@ -30,10 +30,10 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    '''
+    """
     Запуск миграций в offline-режиме (без реального подключения к БД).
     Генерирует SQL-скрипты.
-    '''
+    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -48,9 +48,9 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    '''
+    """
     Запуск миграций в online-режиме (с подключением к БД).
-    '''
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",

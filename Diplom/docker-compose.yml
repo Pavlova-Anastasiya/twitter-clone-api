@@ -6,29 +6,32 @@ services:
       POSTGRES_USER: microblog
       POSTGRES_PASSWORD: microblog
     ports:
-      - "5434:5432"        # внешний порт 5434 на твоей машине (внутри контейнера 5432)
+      - "5434:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U microblog -d microblog"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
     restart: unless-stopped
 
   app:
     build: .
     env_file: .env
-    environment:
-      - PYTHONPATH=/app
     command: >
       sh -c "alembic upgrade head &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
-    ports:
-      - "8000:8000"
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      # сюда кладём СБОРКУ фронта (index.html, js, css)
+      - ./frontend_dist:/usr/share/nginx/html:ro
+      # наш конфиг nginx
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
     restart: unless-stopped
 
 volumes:

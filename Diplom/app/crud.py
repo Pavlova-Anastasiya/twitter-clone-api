@@ -1,7 +1,7 @@
-'''
+"""
 Слой CRUD (доступ к данным).
 Содержит операции над пользователями, твитами, медиа, лайками и подписками.
-'''
+"""
 from __future__ import annotations
 
 from typing import Iterable
@@ -16,15 +16,15 @@ from app.models.follow import Follow
 
 # ---- Пользователи ----
 def get_user_by_id(db: Session, user_id: int) -> User | None:
-    '''Найти пользователя по id.'''
+    """Найти пользователя по id."""
     return db.get(User, user_id)
 
 
 def get_or_create_user_by_api_key(db: Session, api_key: str, name: str = "Demo User") -> User:
-    '''
+    """
     Для удобства локальной демонстрации: создаёт пользователя, если его нет.
     В реальном проде пользователи создаются вне нашего сервиса.
-    '''
+    """
     user = db.query(User).filter(User.api_key == api_key).first()
     if user:
         return user
@@ -37,7 +37,7 @@ def get_or_create_user_by_api_key(db: Session, api_key: str, name: str = "Demo U
 
 # ---- Медиа ----
 def create_media(db: Session, path: str) -> Media:
-    '''Создать медиа запись.'''
+    """Создать медиа запись."""
     media = Media(path=path)
     db.add(media)
     db.commit()
@@ -46,13 +46,13 @@ def create_media(db: Session, path: str) -> Media:
 
 
 def get_medias_by_ids(db: Session, ids: Iterable[int]) -> list[Media]:
-    '''Получить список медиа по id.'''
+    """Получить список медиа по id."""
     return db.query(Media).filter(Media.id.in_(list(ids))).all()
 
 
 # ---- Твиты ----
 def create_tweet(db: Session, author_id: int, content: str, media_ids: list[int] | None) -> Tweet:
-    '''Создать твит с опциональными медиаприложениями.'''
+    """Создать твит с опциональными медиаприложениями."""
     tweet = Tweet(author_id=author_id, content=content)
     db.add(tweet)
     db.flush()  # получим tweet.id без commit
@@ -68,7 +68,7 @@ def create_tweet(db: Session, author_id: int, content: str, media_ids: list[int]
 
 
 def delete_tweet(db: Session, tweet_id: int, author_id: int) -> bool:
-    '''Удалить твит, проверив, что это твит автора.'''
+    """Удалить твит, проверив, что это твит автора."""
     tweet = db.get(Tweet, tweet_id)
     if not tweet or tweet.author_id != author_id:
         return False
@@ -79,7 +79,7 @@ def delete_tweet(db: Session, tweet_id: int, author_id: int) -> bool:
 
 # ---- Лайки ----
 def like_tweet(db: Session, user_id: int, tweet_id: int) -> None:
-    '''Поставить лайк (idempotent).'''
+    """Поставить лайк (idempotent)."""
     exists = db.query(Like).filter(Like.user_id == user_id, Like.tweet_id == tweet_id).first()
     if exists:
         return
@@ -88,7 +88,7 @@ def like_tweet(db: Session, user_id: int, tweet_id: int) -> None:
 
 
 def unlike_tweet(db: Session, user_id: int, tweet_id: int) -> None:
-    '''Убрать лайк (idempotent).'''
+    """Убрать лайк (idempotent)."""
     like = db.query(Like).filter(Like.user_id == user_id, Like.tweet_id == tweet_id).first()
     if like:
         db.delete(like)
@@ -97,7 +97,7 @@ def unlike_tweet(db: Session, user_id: int, tweet_id: int) -> None:
 
 # ---- Подписки ----
 def follow_user(db: Session, follower_id: int, followee_id: int) -> None:
-    '''Подписаться (idempotent).'''
+    """Подписаться (idempotent)."""
     if follower_id == followee_id:
         return
     exists = db.query(Follow).filter(
@@ -110,7 +110,7 @@ def follow_user(db: Session, follower_id: int, followee_id: int) -> None:
 
 
 def unfollow_user(db: Session, follower_id: int, followee_id: int) -> None:
-    '''Отписаться (idempotent).'''
+    """Отписаться (idempotent)."""
     rel = db.query(Follow).filter(
         Follow.follower_id == follower_id, Follow.followee_id == followee_id
     ).first()
@@ -121,10 +121,10 @@ def unfollow_user(db: Session, follower_id: int, followee_id: int) -> None:
 
 # ---- Лента ----
 def get_feed_for_user_sorted_by_popularity(db: Session, user_id: int) -> list[Tweet]:
-    '''
+    """
     Получить ленту твитов от тех, на кого подписан user_id, отсортированную по популярности (кол-во лайков DESC).
     При равенстве лайков — по дате создания DESC.
-    '''
+    """
     sub_followees = select(Follow.followee_id).where(Follow.follower_id == user_id).subquery()
 
     stmt = (
@@ -139,7 +139,7 @@ def get_feed_for_user_sorted_by_popularity(db: Session, user_id: int) -> list[Tw
 
 
 def get_likes_for_tweet(db: Session, tweet_id: int) -> list[tuple[int, str]]:
-    '''Вернуть список (user_id, name) тех, кто лайкнул твит.'''
+    """Вернуть список (user_id, name) тех, кто лайкнул твит."""
     stmt = (
         select(User.id, User.name)
         .join(Like, Like.user_id == User.id)

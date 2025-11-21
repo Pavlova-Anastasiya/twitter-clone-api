@@ -1,6 +1,6 @@
-'''
+"""
 Роутер твитов: создание, удаление, лайки, лента.
-'''
+"""
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -20,7 +20,10 @@ from app.schemas import (
 )
 from app.crud import create_tweet, delete_tweet, like_tweet, unlike_tweet, get_feed_for_user_sorted_by_popularity, get_likes_for_tweet
 
-router = APIRouter(prefix="/api/tweets", tags=["Tweets"])
+router = APIRouter(prefix="/tweets", tags=["Tweets"])
+
+
+
 
 
 @router.post("", response_model=CreateTweetResponse, responses={400: {"model": ErrorResponse}})
@@ -29,14 +32,14 @@ def create_tweet_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    '''
+    """
     Создать новый твит.
 
     Вход:
         { "tweet_data": str, "tweet_media_ids": [int]? }
     Выход:
         { "result": true, "tweet_id": int }
-    '''
+    """
     if not payload.tweet_data.strip():
         raise HTTPException(status_code=400, detail={"result": False, "error_type": "ValidationError", "error_message": "Empty tweet"})
     tweet = create_tweet(db, author_id=user.id, content=payload.tweet_data.strip(), media_ids=payload.tweet_media_ids)
@@ -49,13 +52,13 @@ def delete_tweet_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    '''
+    """
     Удалить твит текущего пользователя.
 
     Ошибки:
         404 — твит не найден;
         403 — попытка удалить чужой твит.
-    '''
+    """
     from app.models.tweet import Tweet  # локальный импорт во избежание циклов
     t = db.get(Tweet, tweet_id)
     if not t:
@@ -74,9 +77,9 @@ def like_tweet_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    '''
+    """
     Поставить лайк твиту (idempotent).
-    '''
+    """
     like_tweet(db, user_id=user.id, tweet_id=tweet_id)
     return OperationResponse()
 
@@ -87,9 +90,9 @@ def unlike_tweet_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    '''
+    """
     Убрать лайк с твита (idempotent).
-    '''
+    """
     unlike_tweet(db, user_id=user.id, tweet_id=tweet_id)
     return OperationResponse()
 
@@ -99,12 +102,12 @@ def get_feed_endpoint(
     db: Session = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    '''
+    """
     Получить ленту твитов от пользователей, на которых подписан текущий пользователь,
     отсортированную по популярности (кол-во лайков по убыванию), при равенстве — по дате.
 
     Формат выхода соответствует ТЗ.
-    '''
+    """
     tweets = get_feed_for_user_sorted_by_popularity(db, user_id=user.id)
     items: list[TweetItem] = []
     for t in tweets:

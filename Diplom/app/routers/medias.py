@@ -1,7 +1,7 @@
-'''
+"""
 Роутер для загрузки медиа-файлов.
 POST /api/medias — принимает multipart/form-data (поле "file"), сохраняет в MEDIA_DIR и возвращает media_id.
-'''
+"""
 from __future__ import annotations
 
 import os
@@ -16,7 +16,7 @@ from app.deps import get_current_user
 from app.crud import create_media
 from app.schemas import MediaUploadResponse, ErrorResponse
 
-router = APIRouter(prefix="/api/medias", tags=["Medias"])
+router = APIRouter(prefix="/medias", tags=["Medias"])
 
 
 @router.post("", response_model=MediaUploadResponse, responses={400: {"model": ErrorResponse}})
@@ -25,7 +25,7 @@ async def upload_media(
     db: Session = Depends(get_db),
     _user=Depends(get_current_user),
 ):
-    '''
+    """
     Загрузить файл.
 
     Требования:
@@ -37,7 +37,7 @@ async def upload_media(
 
     Ошибки:
         400 — если не удалось сохранить файл.
-    '''
+    """
     try:
         Path(settings.media_dir).mkdir(parents=True, exist_ok=True)
         filename = file.filename or "upload.bin"

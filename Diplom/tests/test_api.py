@@ -1,7 +1,7 @@
-'''
+"""
 Минималистичные unit-тесты на базе TestClient.
 Для скорости используем тестовую БД SQLite в памяти, переопределяя зависимость get_db.
-'''
+"""
 from __future__ import annotations
 import os
 os.environ["DATABASE_URL"] = "sqlite+pysqlite:///:memory:"  # заставим app.database создать engine на SQLite
@@ -35,12 +35,12 @@ client = TestClient(app)
 
 
 def test_flow_create_media_and_tweet_and_feed():
-    '''
+    """
     Интеграционный сценарий:
     1) Загружаем медиа (пустой файл),
     2) Создаём твит с этим медиа,
     3) Запрашиваем ленту — ожидаем твит в ответе.
-    '''
+    """
     headers = {"api-key": "k1"}
 
     # 1. upload media
