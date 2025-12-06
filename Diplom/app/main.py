@@ -4,17 +4,14 @@
 Возможности:
 - Swagger UI/OpenAPI по адресу /docs и /openapi.json;
 - Роутеры для users, tweets, medias;
-- Глобальная защита API ключом через заголовок `api-key` (кнопка Authorize в Swagger);
-- Простая домашняя страница со ссылкой на Swagger;
+- Поддержка заголовка `api-key` (для фронтенда и Swagger), но БЕЗ проверки на бэкенде;
 - Демонстрационный хук старта: создаёт пользователей по api-key из заголовка при первом обращении.
 """
 from __future__ import annotations
 
-import os
 from typing import Optional
 
-from fastapi import FastAPI, Request, Security, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Security
 from fastapi.security import APIKeyHeader
 from sqlalchemy.orm import Session
 
@@ -23,40 +20,39 @@ from app.database import get_db
 from app.crud import get_or_create_user_by_api_key
 from app.routers import users, tweets, medias
 from fastapi.openapi.utils import get_openapi
-# --- Security: схема API key для Swagger и проверка ключа ---
-# Заголовок, из которого берём ключ
+
+
+# --- Заголовок api-key для Swagger и фронтенда ---
+# ВАЖНО: проверку ключа на бэке мы НЕ делаем, как просил куратор.
 api_key_header = APIKeyHeader(
     name="api-key",
-    description="Введите один из ключей из .env (например k1 или k2).",
+    description="Ключ, который проверяет только фронтенд (например: test).",
     auto_error=False,
 )
 
-# Разрешённые значения ключей из .env (.env в корне проекта/compose):
-# API_KEY_K1=k1
-# API_KEY_K2=k2
-VALID_KEYS = {os.getenv("API_KEY_K1"), os.getenv("API_KEY_K2")}
-VALID_KEYS.discard(None)  # на случай, если переменная не задана
-
 
 def require_api_key(api_key: Optional[str] = Security(api_key_header)) -> str:
-    if not api_key or api_key not in VALID_KEYS:
-        # важный момент: 401 + WWW-Authenticate, чтобы Swagger красиво реагировал
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or missing API Key",
-            headers={"WWW-Authenticate": "API-Key"},
-        )
-    return api_key
+    """
+    В итоговом проекте Python Advanced бэкенд НЕ проверяет значение api-key.
+    Наличие/значение ключа проверяет только фронтенд.
+
+    Функция оставлена только для того, чтобы в Swagger была кнопка Authorize
+    и можно было удобно подставлять заголовок api-key при тестировании.
+    """
+    # Никаких HTTPException здесь НЕ бросаем.
+    return api_key or "anonymous"
 
 
 # Приложение
 app = FastAPI(title=settings.api_title, version=settings.api_version)
 
-# Подключаем роутеры и вешаем защиту на все эндпоинты этих роутеров
-# (если нужно защитить не всё — убери dependencies у нужного router и ставь на отдельные ручки)
+# Подключаем роутеры.
+# dependencies=[Security(require_api_key)] оставляем только ради схемы в Swagger,
+# фактической проверки внутри require_api_key больше нет.
 app.include_router(medias.router, prefix="/api", dependencies=[Security(require_api_key)])
 app.include_router(tweets.router, prefix="/api", dependencies=[Security(require_api_key)])
 app.include_router(users.router,  prefix="/api", dependencies=[Security(require_api_key)])
+
 
 def custom_openapi():
     if app.openapi_schema:
@@ -78,20 +74,13 @@ def custom_openapi():
     app.openapi_schema = openapi_schema
     return app.openapi_schema
 
+
 app.openapi = custom_openapi
 
-@app.get("/", response_class=HTMLResponse)
-def index() -> str:
-    """Простейшая домашняя страница c ссылкой на Swagger."""
-    return """
-    <html>
-      <head><title>Microblog Service</title></head>
-      <body>
-        <h1>Microblog Service</h1>
-        <p>Откройте <a href="/docs">Swagger UI</a> для тестирования API.</p>
-      </body>
-    </html>
-    """
+
+# ВАЖНО: обработчик корня "/" УДАЛЁН.
+# Раздачей статики (index.html) занимается nginx, как написал куратор.
+# Поэтому здесь НИКАКИХ @app.get("/") быть не должно.
 
 
 @app.middleware("http")
@@ -99,6 +88,7 @@ async def demo_autocreate_user(request: Request, call_next):
     """
     Демонстрационная прослойка: если приходит заголовок `api-key`,
     а такого пользователя ещё нет — создаём его с именем "User <last 6>".
+    Бэкенд при этом НИЧЕГО не валидирует.
     """
     api_key = request.headers.get("api-key")
     if api_key:
