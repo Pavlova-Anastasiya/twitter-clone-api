@@ -1,6 +1,18 @@
 .venv/
 venv/
-.idea/
 __pycache__/
 *.pyc
 .env
+
+# Настройки IDE
+.idea/
+
+# Лишние вспомогательные файлы
+CACHED
+[auth]
+[internal]
+exporting
+naming
+reading
+resolving
+transferring
