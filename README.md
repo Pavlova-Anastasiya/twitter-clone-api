@@ -90,8 +90,8 @@
 
 🚀 Как запустить проект
 1. Клонировать репозиторий
-git clone https://gitlab.skillbox.ru/anastasiya_pavlova/python_advanced_diploma.git
-cd python_advanced_diploma/Diplom
+git clone https://github.com/Pavlova-Anastasiya/twitter-clone-api.git
+cd twitter-clone-api
 
 2. Создать файл окружения .env
 В корне папки Diplom уже есть пример:
