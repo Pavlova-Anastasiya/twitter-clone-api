@@ -144,20 +144,20 @@ Backend-сервис микроблогов (аналог Twitter), реализ
 
 ### API документация (Swagger)
 Интерактивная документация API, позволяющая тестировать эндпоинты сервиса: создание твитов, лайки, загрузка медиа и получение данных пользователей.
-![Swagger](img/swagger.png)
-![Swagger](img/swagger_2.png)
+![Swagger](Diplom/img/swagger.png)
+![Swagger](Diplom/img/swagger_2.png)
 
 
 ### Создание твита через API
 Пример выполнения POST-запроса для создания твита через Swagger UI с передачей данных и получением ответа от сервера.
-![Create Tweet](img/api_create_tweet.png)
+![Create Tweet](Diplom/img/api_create_tweet.png)
 
 
 ### Получение текущего пользователя
 Endpoint возвращает информацию о текущем пользователе по API-ключу.
-![Get current user](img/api_user_me.png)
+![Get current user](Diplom/img/api_user_me.png)
 
 
 ### Удаление твита через API
 Пример выполнения DELETE-запроса для удаления собственного твита через Swagger UI.
-![Delete Tweet](img/api_delete_tweet.png)
+![Delete Tweet](Diplom/img/api_delete_tweet.png)
